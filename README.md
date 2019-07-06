@@ -16,11 +16,10 @@ Currently supports following devices and  New devices can be added thought confi
 * **Configuration**- update the device configuration like Mqtt topic, Tele-Period, Pulse-period, switch mode, dimmer options 
 * **Console Logs**- Console logs show all messages including the Mqtt data and all other server information for debuging
 
+Setup Instructions: [refer here](https://github.com/thirug010/Virtual-Tasmota-for-Tuya-api-devices/wiki/Setup-Instructions) 
+
 Thanks To:
 * [TuyAPI](https://github.com/codetheweb/tuyapi) - NPM library for LAN control of Tuya devices with stock firmware
 * [Sonoff-Tasmota](https://github.com/arendst/Sonoff-Tasmota) - Alternative firmware for ESP8266 based devices like iTead Sonoff, Tuya ...
 * [Tuya Convert](https://github.com/ct-Open-Source/tuya-convert) - Provides with the means to backup the original and flash an alternative firmware
-
-
-
 
