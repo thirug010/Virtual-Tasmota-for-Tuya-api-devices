@@ -1,7 +1,5 @@
 # Virtual Tasmota for Tuya-api devices (Tuya-VT)
 
-# Virtual Tasmota for Tuya-api devices (Tuya-VT)
-
 Tuya Api devices can mimic as [Tasmota Devices](https://github.com/arendst/Sonoff-Tasmota/wiki) without flashing the tasmota firmware using the [Tuya-Api](https://github.com/codetheweb/tuyapi). current version supports tasmota features, such as **Mqtt**, **Web UI** , **Configuration**, **Console log**...
 
 New Tuya firmware (_1.0.7, 2.0, 3.3.._) updates disable the [OTA Flashing](https://github.com/ct-Open-Source/tuya-convert) options at the moment, This feature allows you to use the non flashed Tuya devices as tasmota device along with tasmota flashed devices, most of the tasmota features is virtually available and it can be expanded.
