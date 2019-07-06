@@ -6,7 +6,7 @@ var njDB = require('./nodeStorage2.js');
 njDB.init('Tuya-Api-Tasmota.rs');
 
 
-Utility.MqTTServer = 'mqtt://192.168.1.10:1883';
+Utility.MqTTServer = 'mqtt://xxx.xxx.x.xx:1883'; // mqtt server ip nd port 
 
 Utility.tam_storage_key = 'tam_app_001';
 Utility.getStorageKey = function(propertyname)
@@ -54,12 +54,9 @@ Utility.deviceTypes = [
 						   {name: 'Tuya Swtich 3 CH', id: 'tuya_switch_ch3', template:'shd_s3c_template.htm' ,isDimmer: false ,powers:[1,2,3],    },// dimmerId :0, rangeFactor:-1 , minDimValue:-1 },
 						   {name: 'Tuya Swtich 4 CH', id: 'tuya_switch_ch4', template:'shd_s4c_template.htm' ,isDimmer: false ,powers:[1,2,3,4],  },// dimmerId :0, rangeFactor:-1 , minDimValue:-1 }
                       ];
-Utility.devicesConfig = [];/*[
-							   				 {friendlyName :'3 Gang Light',		  devId: '88840765bcddc2293084', key :'aebbf9a41cd70e8b', nodeId: 'shd_s3c_api_001', deviceType: 'tuya_switch_ch4', telePeriod: {time:8, factor:'s'} },
-                			   {friendlyName :'Fan Dimmer 001',		devId: '5220030684f3eb7ed48c', key: '059de7f765e39340', nodeId: 'shd_d2c_api_001', deviceType: 'tuya_switch_fan', telePeriod: {time:8, factor:'s'} },
-                			   {friendlyName :'Lit Dimmer 001',		devId: '064807652cf43202b914', key: 'b8005532822c2aa2', nodeId: 'shd_d1c_api_001', deviceType: 'tuya_dimmer'    , telePeriod: {time:8, factor:'s'} },
-                			   {friendlyName :'Lit Dimmer 002',		devId: '064807652cf43202b8d3', key: '7da2cb3dec8d6550', nodeId: 'shd_d1c_api_002', deviceType: 'tuya_dimmer'    , telePeriod: {time:8, factor:'s'} }
-                		];*/
+					  
+Utility.devicesConfig = [];
+
 Utility.devicesList = [];
 Utility.init = function (cdnPort, webPort)
 {

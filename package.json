@@ -9,6 +9,7 @@
     "express-session": "1.16.2",
     "mqtt": "^3.0.0",
     "node-storage": "0.0.8",
-    "path": "0.12.7"
+    "path": "0.12.7",
+    "tuyapi": "^5.1.1"
   }
 }
