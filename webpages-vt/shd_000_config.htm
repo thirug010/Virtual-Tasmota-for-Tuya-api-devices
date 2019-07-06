@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+	<script src='{0}:{1}/jquery.min.js'></script>
+	<script src='{0}:{1}/angular.js'></script>
+	<script src='{0}:{1}/linqIt.js'></script>
+    <title>Configure Module</title>
+    <style>
+		.slider {
+					-webkit-appearance: none;
+					width: 100%;
+					margin-left: -4px;
+					height: 3px;
+					background: #d3d3d3;
+					outline: none;
+					opacity: 0.7;
+					-webkit-transition: .2s;
+					transition: opacity .2s;
+					padding: 0 !important;
+				}
+
+			.slider:hover 
+				{
+				  opacity: 1;
+				}
+
+			.slider::-webkit-slider-thumb 
+				{
+				  -webkit-appearance: none;
+				  appearance: none;
+				  width: 6px;
+				  height: 15px;
+				  background: #058df9;
+				  cursor: pointer;
+				}
+
+			.slider::-moz-range-thumb 
+				{
+				  width: 6px;
+				  height: 15px;
+				  background: #058df9;
+				  cursor: pointer;
+				}
+        div,
+        fieldset,
+        input,
+        select {
+            padding: 5px;
+            font-size: 1em;
+        }
+        
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+        }
+        
+        select {
+            width: 100%;
+        }
+        
+        textarea {
+            resize: none;
+            width: 98%;
+            height: 318px;
+            padding: 5px;
+            overflow: auto;
+        }
+        
+        body {
+            text-align: center;
+            font-family: verdana;
+        }
+        
+        td {
+            padding: 0px;
+        }
+        
+        button {
+            border: 0;
+            border-radius: 0.3rem;
+            background-color: #1fa3ec;
+            color: #fff;
+            line-height: 2.4rem;
+            font-size: 1.2rem;
+            width: 100%;
+            -webkit-transition-duration: 0.4s;
+            transition-duration: 0.4s;
+            cursor: pointer;
+        }
+
+		input {
+			font-size: 11px;
+			width: 100%;
+			box-sizing: border-box;
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			padding: 5px;
+		}
+		
+		select
+		{
+			font-size: 11px;
+			width: 100%;
+			padding: 5px;
+		}
+        
+        button:hover {
+            background-color: #0e70a4;
+        }
+        
+        .bred {
+            background-color: #d43535;
+        }
+        
+        .bred:hover {
+            background-color: #931f1f;
+        }
+        
+        .bgrn {
+            background-color: #47c266;
+        }
+        
+        .bgrn:hover {
+            background-color: #5aaf6f;
+        }
+        
+        a {
+            text-decoration: none;
+        }
+        
+        .p {
+            float: left;
+            text-align: left;
+        }
+        
+        .q {
+            float: right;
+            text-align: right;
+        }
+		.slider-div
+		{
+			float: left;
+			margin-top: -11px;
+			margin-left: -7px;
+			/* border: 1px solid red; */
+			width: 142px;
+		}
+		.slider-td
+		{
+			float: left;
+			border: 1px solid rgba(169, 169, 169, 0.45);
+			width: 160px;
+			height: 17px;
+		}
+		.select-td
+		{
+		    font-size: 13px;
+		}
+		.slider-div2
+		{
+			float: left;
+			font-size: 11px;
+			margin-top: -22px;
+			margin-left: 134px;
+		}
+		.selecty
+		{
+			font-size: 11px;
+			width: 100%;
+			padding: 5px;
+		}
+    </style>
+	<script>
+		var g_hostName = '{0}';
+		var g_cdnPort  = '{1}';
+		var g_webPort  = '{2}';
+		var app = angular.module('myApp', []);
+		app.controller('shd_000_ctrl', function($scope) {
+			$scope.shdItem = JSON.parse('{3}');
+			$scope.deviceTypes = JSON.parse('{4}');
+			$scope.minDimValue = 10;	
+			console.log($scope.shdItem.type);
+			$scope.dimmerIds =[];
+			for(var t=0; t< 5 ;t++)
+			{
+				var txt = t == 0 ? 'None' : t.toString();
+				$scope.dimmerIds.push({id:t, name :txt});
+			}
+			$scope.rageFactors = [{id:0, name: 'None'},{id:100, name: '0 - 100'},{id: 255, name: '0 - 255'}];
+			var selDevType = LinqIt($scope.deviceTypes, true).Where('id', $scope.shdItem.deviceType).FirstOrDefault();
+			$scope.selectedModule = selDevType;
+			
+			$scope.navi2Device = function()
+			{
+				location.replace('/?nodeId='+$scope.shdItem.nodeId);
+			}
+			$scope.save = function()
+			{
+				console.log($scope.shdItem);
+							
+				var url = '/dcu?dev='+JSON.stringify($scope.shdItem);
+				$scope.httpCall(url, function(result) 
+												{
+													alert(result.message);
+													location.reload();
+													//shdITem = {};
+													//$scope.selectedModule = $scope.deviceTypes[0];;
+												} , 
+									 function (){
+													alert('New Device cannot be added, Please try again!');
+												});
+				
+				
+			}
+			
+			$scope.validateDevice=function()
+			{
+				var required = ['devId','key','nodeId','friendlyName'];
+			}
+			
+			$scope.httpCall = function (url, sucess , failure)
+			{
+				    $.ajax({url: url, 
+					success: function(result)
+					 {
+					  sucess(result);
+					 }
+					 ,error: function(result)
+					 {  
+					  failure(result); 
+					 }
+					});
+			}
+		});
+		
+		var lb = function()
+		{
+		}
+		
+	</script>
+</head>
+
+<body ng-app="myApp">
+    <div style='text-align:left;display:inline-block;min-width:340px;' ng-controller="shd_000_ctrl">
+        <div style='text-align:center;'>
+            <noscript>To use Tasmota, please enable JavaScript
+                <br/>
+            </noscript>
+            <h2>Virtual Tasmota Config</h2>
+            <h3>{{shdItem.friendlyName}}</h3></div>
+        <fieldset>
+            <legend><b>&nbsp;Module parameters&nbsp;</b></legend>
+            <div>
+                <br/><b>Module type</b> ({{selectedModule.name}})
+                <br/>
+					<select ng-model="selectedModule" ng-options="x.name for x in deviceTypes">
+					</select>
+                <br/>
+                <table>
+                <br/>
+                    <tr ng-show="selectedModule.isDimmer">
+                        <td style="width:190px"> <b>Dimmer Range</b></td>
+						<td style="width:160px">
+							<select ng-model="shdItem.rangeFactor" ng-options="option.id as option.name for option in rageFactors"></select>
+						</td>
+                    </tr>
+                    <tr ng-show="selectedModule.isDimmer">
+                        <td style="width:190px"> <b>Dimmer Id</b></td>
+						<td style="width:160px">
+							<select ng-model="shdItem.dimmerId" ng-options="option.id as option.name for option in dimmerIds"></select>
+						</td>
+                    </tr>
+                    <tr ng-show="selectedModule.isDimmer">
+                        <td style="width:190px"> <b>Min Dim Value</b></td>
+						<td style="width:160px">
+							<div class="slider-td">
+								<div class="slider-div">
+									<input id='nodeId_dev2' type="range" min="1" max="100" value="10" onchange="lb(value)" class='slider' ng-model='shdItem.minDimValue'>
+								</div>
+								<div class="slider-div2">
+									<span id='min_dim_lbl'>{{shdItem.minDimValue}}</span>%
+								</div>
+							</div>
+						</td>
+                    </tr>
+					<tr ng-repeat="p in selectedModule.powers">
+                        <td style='width:190px'> <b>PulsePeriod</b><span style="font-size: 14px;font-style: italic;"> (Power-{{p}})</span> </td>
+                        <td style='width:160px'>
+							<table>
+									<tbody><tr class="select-td">
+										<td style="width:60%"><input value="-1" ng-model="shdItem.pulsePeriod[p].time"></input></td>
+										<td style="width:60%">
+											<select id='g4' name='g4' ng-model="shdItem.pulsePeriod[p].factor" class="selecty">
+												<option selected= "" value="n">None</option>
+												<option value="s">Sec</option>
+												<option value="m">Min</option>
+												<option value="h">Hour</option>
+											</select>
+										</td>
+									</tr></tbody>
+							</table>
+                        </td>
+                    </tr>
+					
+                    <tr>
+                        <td style='width:190px'> <b>TelePeriod</b> </td>
+                        <td style='width:160px'>
+							<table>
+									<tbody><tr class="select-td">
+										<td style="width:60%"><input value="120" ng-model="shdItem.telePeriod.time"></input></td>
+										<td style="width:60%">
+											<select id='g4' name='g4' ng-model="shdItem.telePeriod.factor" class="selecty">
+												<option selected= "" value="n">None</option>
+												<option value="s">Sec</option>
+												<option value="m">Min</option>
+												<option value="h">Hour</option>
+											</select>
+										</td>
+									</tr></tbody>
+							</table>
+                        </td>
+                    </tr>
+					
+                    <tr>
+                        <td style="width:190px"> <b>Mqtt Topic</b></td>
+						<td style="width:160px">
+							<select id='g4' name='g4'  ng-model="shdItem.topic" class="selecty">
+								<option selected= "" value="nodeId">Node ID (default)</option>
+								<option value="devId">Device ID</option>
+								<option value="key">Local Key</option>
+								<option value="friendlyName">Friendly Name</option>
+							</select>
+						</td>
+                    </tr>
+					
+                </table>
+                <br/>
+                <button name='save' class='button bgrn' ng-click='save()'>Save</button>
+            </div>
+        </fieldset>
+        <br/>
+        <div>
+            <button ng-click=navi2Device()>Go Back</button>
+        </div>
+        <div style="text-align:center;font-size:11px;;padding:0">
+            <hr><a href="https://bit.ly/tasmota" target="_blank" style="color:#aaa;">Virtual tasmota for Tuya-api devices (Sonoff-Tasmota 6.5.0.11) </a></div>
+    </div>
+</body>
+</html>

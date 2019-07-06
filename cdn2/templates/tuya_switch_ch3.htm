@@ -1,0 +1,23 @@
+<div class="div0">
+	<div class="openPopup"><span class="openPopupTitile">tuya-{{item.devIdShort}}</span> <img src="{0}:{1}/image/PopOut_002.png" class="popup-icon" onclick="navigate('{{item.nodeId}}')" /> </div>
+	<div class="button-table">
+		<table class="button-table-t">
+			<tbody>	<tr style="text-align:center">
+				<td style="width:50%" colspan='2' style='text-align:center'>
+					<button id='{{item.nodeId}}_dev1' onclick="lo(1,'{{item.nodeId}}');" class="single">1</button>
+				</td>
+				</tr>
+				<tr style="text-align:center">
+				<td style="width:50%">
+							<button id='{{item.nodeId}}_dev2' onclick="lo(2,'{{item.nodeId}}');">2</button>
+						</td>
+						<td style="width:50%">
+							<button id='{{item.nodeId}}_dev3' onclick="lo(3,'{{item.nodeId}}');">3</button>
+						</td>
+					</tr></tbody>
+				</table>
+		<div class="titile">
+		<span>{{item.titleShort}}</span>
+	</div>
+	</div>
+</div>

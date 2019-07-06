@@ -1,0 +1,18 @@
+<div class="div0">
+	<div class="openPopup"><span class="titile">add new</span> <img src="{0}:{1}/image/PopOut_002.png" class="popup-icon" onclick="navigate('{{item.nodeId}}')" /> </div>
+	<div class="button-table">
+		<table style="width:100%">
+			<tbody>
+				<tr style="text-align:center">
+					<td>
+						<button id='{{item.nodeId}}_dev1' class='single' onclick="lo(1,'{{item.nodeId}}');">+</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div><input id='{{item.nodeId}}_dev2' type="range" min="1" max="100" value="96" onchange="lb(value,'{{item.nodeId}}')"></div>
+	<div class="titile">
+		<span>add new Device</span>
+	</div>
+</div>

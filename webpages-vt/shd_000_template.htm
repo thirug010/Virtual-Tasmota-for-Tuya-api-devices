@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+	<head>
+		<meta charset='utf-8'>
+		<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+		<script src='{0}:{1}/jquery.min.js'></script>
+		<script src='{0}:{1}/angular.js'></script>
+		<title>Virtual Tasmota for Tuya-api</title>
+		<script>
+			var x = null,lt, to, tp, pc = '', isSyncInProgress = false;
+			function navigate(node)
+			{
+				console.log(node);
+				location.href = "{0}:{2}/?nodeId=" + node;
+			}
+
+			function eb(s) 
+			{
+				return document.getElementById(s);
+			}
+
+			function la() 
+			{
+				var a = '';
+				
+				if (x != null) 
+				{
+					x.abort();
+				}
+				if(!isSyncInProgress)
+				{
+					x = new XMLHttpRequest();
+					x.onreadystatechange = function() {
+						if (x.readyState == 4 && x.status == 200) {
+							var data = x.responseText;
+							var devList = JSON.parse(data);
+							for(var i=0; i < devList.length; i++)
+							{
+								var d = devList[i];
+								for(var j=0; j < d.powers.length; j++)
+								{
+									var p = d.powers[j];
+									
+									var devId = d.nodeId+'_dev'+p;
+									var devPower = d.data['POWER'+p];
+									//console.log('eb(devId).classList : ' , eb(devId).classList);
+									
+									if(devPower == 'OFF')
+									{
+										$('#'+devId).addClass('off');
+									}
+									else
+									{
+										$('#'+devId).removeClass('off');
+									}
+									//console.log( +' -----> ' + d.data['POWER'+p]);
+								}
+								if(d.isDimmer)
+								{
+									var dp = Math.round((d.data.Dimmer / d.rangeFactor) * 100);
+									//var dp = Math.round((dp / d.rangeFactor) * 100);
+									console.log(d.nodeId + '--d.dimmer :', d.data.Dimmer + '---' + dp);
+									eb(d.nodeId+'_dev'+d.dimmerId).value = dp;
+									
+								}
+								
+								
+								
+							}
+							//console.log(data);
+						}
+					};
+					x.open('GET', './gd?m=1' + a + '&nodeId=all', true);
+					x.send();
+					lt = setTimeout(la, 2345);
+				}
+			}
+			
+			
+			function lo(o,nodeId) 
+			{
+				isSyncInProgress = true;
+				var x1 = new XMLHttpRequest();
+					x1.onreadystatechange = function() {
+						if (x1.readyState == 4 && x1.status == 200) {
+							setTimeout( function() 
+							{
+								isSyncInProgress = false;
+								console.log('Completed x2.onreadystatechange ....' + isSyncInProgress);
+								la();
+							}, 1000);
+							 if (x1 != null) {
+									x1.abort();
+								}
+						}
+					};
+					console.log('Before x2.open ....' + isSyncInProgress);
+					x1.open('GET', './sd?m=1&o=' + o + '&nodeId='+nodeId, true);
+					x1.send();
+			}
+			function lb(d,nodeId) 
+			{
+				isSyncInProgress = true;
+				var x1 = new XMLHttpRequest();
+					x1.onreadystatechange = function() {
+						if (x1.readyState == 4 && x1.status == 200) {
+							setTimeout( function() 
+							{
+								isSyncInProgress = false;
+								console.log('Completed x2.onreadystatechange ....' + isSyncInProgress);
+								la();
+							}, 1000);
+							 if (x1 != null) {
+									x1.abort();
+								}
+						}
+					};
+					console.log('Before x2.open ....' + isSyncInProgress);
+					x1.open('GET', './sd?m=1&d=' + d + '&nodeId='+nodeId, true);
+					x1.send();
+			}
+			$(document).ready(function() {la();} );
+			//window.onload = ;
+		</script>
+		<style>
+			.divC
+			{
+				padding: 5px;
+				font-size: 1em;
+			}
+			
+			.div0
+			{
+				padding: .08em;
+				font-size: 1em;
+				border: 1px solid #a0a0a0;
+				margin-bottom: 2px;
+				background-color: #8080802b;
+				width: 97px;
+				height: 90px;
+				float: left;
+				margin-left: 6px;
+				margin-top: 6px;
+			}
+			
+			fieldset {
+				background: #f2f2f2;
+			}
+			
+			p {
+				margin: 0.5em 0;
+			}
+			
+			input {
+				width: 96%;
+				box-sizing: border-box;
+				-webkit-box-sizing: border-box;
+				-moz-box-sizing: border-box;
+				background: #ffffff;
+				color: #000000;
+			}
+			
+			input[type=checkbox],
+			input[type=radio] {
+				width: 1em;
+				margin-right: 6px;
+				vertical-align: -1px;
+			}
+			
+			select {
+				width: 100%;
+				background: #ffffff;
+				color: #000000;
+			}
+			
+			textarea {
+				resize: none;
+				width: 98%;
+				height: 318px;
+				padding: 5px;
+				overflow: auto;
+				background: #ffffff;
+				color: #000000;
+			}
+			
+			body {
+				text-align: center;
+				font-family: verdana, sans-serif;
+				background: #ffffff;
+			}
+			
+			td {
+				padding: 0px;
+			}
+			
+			button {
+				border: 0;
+				background: #1fa3ec;
+				color: #ffffff;
+				line-height: 1.0rem;
+				font-size: 1.0rem;
+				width: 22.7969px;
+				-webkit-transition-duration: 0.4s;
+				transition-duration: 0.4s;
+				cursor: pointer;
+			}
+			
+			.off
+			{
+				background-color: #776e6e;
+			}
+			
+			button:hover {
+				background: #0e70a4;
+			}
+			
+			.bred {
+				background: #d43535;
+			}
+			
+			.bred:hover {
+				background: #931f1f;
+			}
+			
+			.bgrn {
+				background: #47c266;
+			}
+			
+			.bgrn:hover {
+				background: #5aaf6f;
+			}
+			
+			a {
+				text-decoration: none;
+			}
+			
+			.p {
+				float: left;
+				text-align: left;
+			}
+			
+			.q {
+				float: right;
+				text-align: right;
+			}
+			.titile
+			{
+				text-align: center;
+				margin-top: 10px;
+				font-size: 11px;
+			}
+			.openPopupTitile
+			{
+				margin-top: 3px;
+				font-size: 12px;
+			}
+			.openPopup
+			{
+				margin-top: -8px;
+				margin-left: 4px;
+			}
+			.popup-icon
+			{
+				height: 12px;
+				margin-left: -3px;
+				margin-top: 9px;
+				cursor:pointer;
+			}
+			.button-table
+			{
+				margin-top: 4px;
+				margin-bottom: 2px;
+				margin-left: 15px;
+			}
+			.button-table-t
+			{
+				    width: 90%;
+			}
+			.l2
+			{
+			 line-height: 3.2rem !important;
+			}
+			.single 
+			{
+				width: 22.7969px;
+			}
+			.slider {
+			  -webkit-appearance: none;
+			  width: 90%;
+			  margin-left: 5px;
+			  height: 3px;
+			  background: #d3d3d3;
+			  outline: none;
+			  opacity: 0.7;
+			  -webkit-transition: .2s;
+			  transition: opacity .2s;
+			}
+
+			.slider:hover {
+			  opacity: 1;
+			}
+
+			.slider::-webkit-slider-thumb {
+			  -webkit-appearance: none;
+			  appearance: none;
+			  width: 6px;
+			  height: 12px;
+			  background: #058df9;
+			  cursor: pointer;
+			}
+
+			.slider::-moz-range-thumb {
+			  width: 6px;
+			  height: 12px;
+			  background: #058df9;
+			  cursor: pointer;
+			}
+			.minus-5
+			{
+			    margin-top: -5px;
+				margin-left: -5px;
+				margin-right: -5px;
+				margin-bottom: -5px;
+			}
+			.search
+			{
+				padding: 0 !important;
+				margin-top: -4px;
+				width: 303px;
+			}
+			.add-new
+			{
+				height: 1.22rem;
+				margin-top: 1px;
+				margin-left: 3px;
+			}
+		</style>
+		<script>
+			var g_hostName = '{0}';
+			var g_cdnPort  = '{1}';
+			var g_webPort  = '{2}';
+			var app = angular.module('myApp', []);
+			app.controller('shd_000_ctrl', function($scope) {
+				$scope.shd_000_list = JSON.parse('{3}');
+				//$scope.shd_000_list.push({nodeId : 'add_new_device', type:'tuya_add_new', powers:[],isDimmer : false})
+				$scope.getIncludeFile = function(item) 
+				{
+					console.log('/gettemplates?item='+JSON.stringify(item));
+					return '/gettemplate?item='+JSON.stringify(item);
+				}
+				$scope.search = function() 
+				{
+					console.log('$scope.search', $scope.searchItem);
+					return true;
+				};
+				
+				$scope.statusUpdate = function()
+				{
+					for(var i=0; i < $scope.shd_000_list.length; i++)
+						{
+							var d = $scope.shd_000_list[i];
+							for(var j=0; j < d.powers.length; j++)
+							{
+								var p = d.powers[j];
+								var devId = d.nodeId+'_dev'+p;
+								var devPower = d.data['POWER'+p];
+								if(devPower == 'OFF')
+								{
+									$('#'+devId).removeClass('off');
+								}
+								else
+								{
+									$('#'+devId).removeClass('off');
+								}
+							}
+							if(d.isDimmer)
+							{
+								var dp = Math.round((d.data.Dimmer / d.rangeFactor) * 100);
+								console.log(d.nodeId + '--d.dimmer :', d.data.Dimmer + '---' + dp);
+								($("#"+d.nodeId+'_dev'+d.dimmerId)[0]).value = dp;
+							}
+						}	
+				}
+				$scope.addNewDevice = function()
+				{
+					location.replace('{0}:{2}/nu');
+				}
+				$(document).ready(function() {$scope.statusUpdate();});
+
+			});
+			
+			
+			app.directive('devIcon', function(){
+				return {
+				  restrict: 'E',
+				 
+				  replace: true,
+				  transclude: false,
+				  scope: { items:'=items'},
+				 
+				  template: '<div ng-repeat="item in items" ng-include="getIncludeFile(item)">'+
+							'</div>',
+							
+				  link: function(scope, element, attrs) {
+					scope.getIncludeFile = function(item) {
+						//return g_hostName +':'+g_cdnPort +'/template/'+item.template+'_01.htm';
+					}
+				   
+				  }
+				}
+			  });
+		</script>
+	</head>
+	<body ng-app="myApp">
+		<div class="divC" style='text-align:left;display:inline-block;color:#000000;width:330px;border:1px solid #dad6d6;height:500px' ng-controller="shd_000_ctrl">
+			<div class="divC minus-5" > 
+				<div style="float: left;margin-top: -1px;">
+				<input class='search' type="text" placeholder="Search device.." name="search2" ng-model="searchItem"></div>
+				<button class='add-new' ng-click="addNewDevice()"> + </button>
+			</div>
+			<div class="divC" style='border:1px solid #dad6d6;height: 472px;margin-top:5px;padding:0!important'>
+				<!--<dev-icon items="shd_000_list"></dev-icon>-->			
+				<div ng-repeat="item in shd_000_list | filter: search" ng-include="getIncludeFile(item)">
+				</div>
+			</div>
+			<div style="text-align:center;font-size:11px;;padding:0">
+            <hr><a href="https://bit.ly/tasmota" target="_blank" style="color:#aaa;">Virtual tasmota for Tuya-api devices (Sonoff-Tasmota 6.5.0.11) </a>
+			</div>
+		</div>
+		        
+	</body>
+</html>

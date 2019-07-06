@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+
+<head>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+	<script src='{0}:{1}/jquery.min.js'></script>
+	<script src='{0}:{1}/angular.js'></script>
+    <title>Virtual Tasmota - Console</title>
+    <script>
+        var cn, x, lt, to, tp, pc = '';
+        cn = 180;
+        x = null;
+
+        function eb(s) {
+            return document.getElementById(s);
+        }
+
+        function u() {
+            if (cn >= 0) {
+                eb('t').innerHTML = 'Restart in ' + cn + ' seconds';
+                cn--;
+                setTimeout(u, 1000);
+            }
+        }
+
+        function c(l) {
+            eb('s1').value = l.innerText || l.textContent;
+            eb('p1').focus();
+        }
+
+        function lx() {
+            if (to == 1) {
+                if (tp < 30) {
+                    tp++;
+                    lt = setTimeout(lx, 33);
+                } else {
+                    lt = setTimeout(la, 1355);
+                }
+                return;
+            }
+            if (x != null) {
+                x.abort();
+            }
+            x = new XMLHttpRequest();
+            x.onreadystatechange = function() {
+                if (x.readyState == 4 && x.status == 200) {
+				eb('t1').innerHTML = x.responseText;
+                }
+            };
+            x.open('GET', 'ay' + pc, true);
+            x.setRequestHeader('Tasmota-Token', to);
+            x.send();
+            pc = '';
+            lt = setTimeout(la, 2345 - (tp * 33));
+        }
+
+        function la(p) {
+            if (la.arguments.length == 1) {
+                pc = '?' + p;
+                clearTimeout(lt);
+            } else {
+                pc = '';
+            }
+            to = 1;
+            tp = 0;
+            if (x != null) {
+                x.abort();
+            }
+            x = new XMLHttpRequest();
+            x.onreadystatechange = function() {
+                if (x.readyState == 4 && x.status == 200) {
+                    to = x.getResponseHeader('Tasmota-Token');
+                } else {
+                    to = 1;
+                }
+            };
+            x.open('GET', 'az', true);
+            x.send();
+            lx();
+        }
+
+        function lb(p) {
+            la('d=' + p);
+        }
+
+        function lc(p) {
+            la('c=' + p);
+        }
+        var sn = 0;
+        var id = 0;
+
+        function l(p) {
+            var c, o, t;
+            clearTimeout(lt);
+            o = '';
+            t = eb('t1');
+            if (p == 1) {
+                c = eb('c1');
+                o = '&c1=' + encodeURIComponent(c.value);
+                c.value = '';
+                t.scrollTop = sn;
+            }
+            if (t.scrollTop >= sn) {
+                if (x != null) {
+                    x.abort();
+                }
+                x = new XMLHttpRequest();
+                x.onreadystatechange = function() {
+                    if (x.readyState == 4 && x.status == 200) {
+                        ($('#t1')[0]).innerHTML = x.responseText;
+                        ($('#t1')[0]).scrollTop = 99999;
+                     }
+                };
+                x.open('GET', 'ax?c2=' + id + o, true);
+                x.send();
+            }
+            lt = setTimeout(l, 2345);
+            return false;
+        }
+    </script>
+    <style>
+        div,
+        fieldset,
+        input,
+        select {
+            padding: 5px;
+            font-size: 1em;
+        }
+        
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+        }
+        
+        select {
+            width: 100%;
+        }
+        
+        textarea {
+            resize: none;
+            width: 98%;
+            height: 318px;
+            padding: 5px;
+            overflow: auto;
+        }
+        
+        body {
+            text-align: center;
+            font-family: verdana;
+        }
+        
+        td {
+            padding: 0px;
+        }
+        
+        button {
+            border: 0;
+            border-radius: 0.3rem;
+            background-color: #1fa3ec;
+            color: #fff;
+            line-height: 2.4rem;
+            font-size: 1.2rem;
+            width: 100%;
+            -webkit-transition-duration: 0.4s;
+            transition-duration: 0.4s;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #0e70a4;
+        }
+        
+        .bred {
+            background-color: #d43535;
+        }
+        
+        .bred:hover {
+            background-color: #931f1f;
+        }
+        
+        .bgrn {
+            background-color: #47c266;
+        }
+        
+        .bgrn:hover {
+            background-color: #5aaf6f;
+        }
+        
+        a {
+            text-decoration: none;
+        }
+        
+        .p {
+            float: left;
+            text-align: left;
+        }
+        
+        .q {
+            float: right;
+            text-align: right;
+        }
+    </style>
+	<script>
+			var g_hostName = '{0}';
+			var g_cdnPort  = '{1}';
+			var g_webPort  = '{2}';
+			
+			var app = angular.module('myApp', []);
+			app.controller('shd_000_ctrl', function($scope) 
+			{
+				$scope.shdItem = JSON.parse('{3}');
+				isDimmer = $scope.shdItem.isDimmer;
+				$scope.statData = "{5}";				
+				$scope.clearConsole = function() 
+				{
+					var url = '/ccl?dev='+JSON.stringify($scope.shdItem);
+					var y =  confirm("Confirm Clear Console logs for all devices?");
+					if(y)
+					{
+						$scope.httpCall(url, function(result) 
+						{
+							alert(result);
+						} , 
+						function ()
+						{
+							alert('Unable to clear the console log, Please try again!');
+						});
+					}
+				}
+				$scope.httpCall = function (url, sucess , failure)
+				{
+					$.ajax({url: url, 
+					success: function(result)
+					 {
+					  sucess(result);
+					 }
+					 ,error: function(result)
+					 {  
+					  failure(result); 
+					 }
+					});
+				}
+				
+				$scope.navi2Device = function()
+				{
+					location.replace(location.href.replace('/cl',''));
+				}
+				
+			});
+		</script>
+</head>
+
+<body onload='l()' ng-app="myApp">
+    <div style='text-align:left;display:inline-block;min-width:340px;' id ="controller" ng-controller="shd_000_ctrl">
+        <div style='text-align:center;'>
+            <noscript>To use Tasmota, please enable JavaScript
+                <br/>
+            </noscript>
+			<h3>{{shdItem.name}} Module</h3>
+			<h2>{{shdItem.friendlyName}}</h2>
+        <br/>
+        <textarea readonly id='t1' name='t1' cols='340' wrap='off'></textarea>
+        <br>
+        <div>
+            <button ng-click="navi2Device()">Go Back</button>
+        </div>
+		<div>
+			<button name="rst" class="button bred" ng-click="clearConsole()">Clear Console Log</button>
+		</div>
+        <br>
+        <div style="text-align:center;font-size:11px;;padding:0">
+			<hr>
+			<a href="https://bit.ly/tasmota" target="_blank" style="color:#aaa;">Virtual Tasmota for Tuya-api devices (Sonoff-Tasmota 6.5.0.11) </a>
+		</div>
+    </div>
+</body>
+
+</html>

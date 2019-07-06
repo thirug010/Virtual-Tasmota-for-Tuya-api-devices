@@ -1,0 +1,21 @@
+<div class="div0">
+<div class="openPopup"><span class="openPopupTitile">tuya-{{item.devIdShort}}</span> <img src="{0}:{1}/image/PopOut_002.png" class="popup-icon" onclick="navigate('{{item.nodeId}}')" /> </div>
+<div class="button-table">
+	<table class="button-table-t">
+		<tbody>
+			<tr style="text-align:center">
+				<td style="width:50%">
+					<button id='{{item.nodeId}}_dev1' onclick="lo(1,'{{item.nodeId}}');">F</button>
+				</td>
+				<td style="width:50%">
+					<button id='{{item.nodeId}}_dev3' onclick="lo(3,'{{item.nodeId}}');">L</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<div><input id='{{item.nodeId}}_dev2' type="range" min="1" max="100" value="96" onchange="lb(value, '{{item.nodeId}}')" class='slider'></div>
+<div class="titile">
+	<span>{{item.titleShort}}</span>
+</div>
+</div>

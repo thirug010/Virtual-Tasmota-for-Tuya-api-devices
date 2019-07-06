@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+
+<head>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+	<script src='{0}:{1}/jquery.min.js'></script>
+	<script src='{0}:{1}/angular.js'></script>
+    <title>Virtual Tasmota</title>
+    <script>
+        var x = null,lt, to, tp, pc = '', isSyncInProgress = false; isDimmer = false;isFirstTime = true;
+        function eb(s) {
+            return document.getElementById(s);
+        }
+
+        function la(p) {
+            var a = '';
+			if(!isSyncInProgress)
+			{
+				if (la.arguments.length == 1) {
+					a = p;
+					clearTimeout(lt);
+				}
+				if (x != null) {
+					x.abort();
+				}
+				x = new XMLHttpRequest();
+				x.onreadystatechange = function() {
+					if (x.readyState == 4 && x.status == 200) 
+					{
+						var onoff = x.responseText.split('#;')[0];
+						var dimmer = x.responseText.split('#;')[1];
+						var s = onoff.replace(/{t}/g, "<table style='width:100%'>").replace(/{s}/g, "<tr><th>").replace(/{m}/g, "</th><td>").replace(/{e}/g, "</td></tr>").replace(/{c}/g, "%'><div style='text-align:center;font-weight:");
+						eb('l1').innerHTML = s;
+						if(isDimmer)
+						{
+							($("input[isactivedimmer='true']")[0]).value= dimmer;
+							//console.log('Completed x.onreadystatechange ....' + isSyncInProgress);
+						}
+					}
+				};
+				//console.log('Before x.open ....' + isSyncInProgress);
+				x.open('GET', './gd?m=1' + a + '&nodeId={4}', true);
+				x.send();
+				//console.log('Completed x.send() ....' + isSyncInProgress);
+				lt = setTimeout(la, 2345);
+			}
+        }
+
+        function lb(p) 
+		{
+			isSyncInProgress = true;
+			var x1 = new XMLHttpRequest();
+				x1.onreadystatechange = function() {
+					if (x1.readyState == 4 && x1.status == 200) {
+						var onoff = x1.responseText.split('#;')[0];
+						var dimmer = x1.responseText.split('#;')[1];
+						var s = onoff.replace(/{t}/g, "<table style='width:100%'>").replace(/{s}/g, "<tr><th>").replace(/{m}/g, "</th><td>").replace(/{e}/g, "</td></tr>").replace(/{c}/g, "%'><div style='text-align:center;font-weight:");
+						eb('l1').innerHTML = s;
+						//(document.getElementsByTagName('input')[0]).value = dimmer;
+						setTimeout( function() 
+						{
+							isSyncInProgress = false;
+							console.log('Completed x2.onreadystatechange ....' + isSyncInProgress);
+							la('');
+						}, 1000);
+						
+							if (x1 != null) {
+								x1.abort();
+							}
+					}
+				};
+				console.log('Before x1.open ....' + isSyncInProgress);
+				x1.open('GET', './sd?m=1' + '&d=' + p + '&nodeId={4}', true);
+				x1.send();
+        }
+		function lo(p) 
+		{
+			isSyncInProgress = true;
+			var x1 = new XMLHttpRequest();
+				x1.onreadystatechange = function() {
+					if (x1.readyState == 4 && x1.status == 200) {
+						var onoff = x1.responseText.split('#;')[0];
+						var dimmer = x1.responseText.split('#;')[1];
+						var s = onoff.replace(/{t}/g, "<table style='width:100%'>").replace(/{s}/g, "<tr><th>").replace(/{m}/g, "</th><td>").replace(/{e}/g, "</td></tr>").replace(/{c}/g, "%'><div style='text-align:center;font-weight:");
+						eb('l1').innerHTML = s;
+						(document.getElementsByTagName('input')[0]).value = dimmer;
+						setTimeout( function() 
+						{
+							isSyncInProgress = false;
+							console.log('Completed x2.onreadystatechange ....' + isSyncInProgress);
+							la('');
+						}, 1000);
+						 if (x1 != null) {
+								x1.abort();
+							}
+					}
+				};
+				console.log('Before x2.open ....' + isSyncInProgress);
+				x1.open('GET', './sd?m=1' + p + '&nodeId={4}', true);
+				x1.send();
+        }
+
+        function lc(p) {
+            la('&t=' + p);
+        }
+        window.onload = la();
+    </script>
+    <style>
+        div,
+        fieldset,
+        input,
+        select {
+            padding: 5px;
+            font-size: 1em;
+        }
+        
+        fieldset {
+            background: #f2f2f2;
+        }
+        
+        p {
+            margin: 0.5em 0;
+        }
+        
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            background: #ffffff;
+            color: #000000;
+        }
+        
+        input[type=checkbox],
+        input[type=radio] {
+            width: 1em;
+            margin-right: 6px;
+            vertical-align: -1px;
+        }
+        
+        select {
+            width: 100%;
+            background: #ffffff;
+            color: #000000;
+        }
+        
+        textarea {
+            resize: none;
+            width: 98%;
+            height: 318px;
+            padding: 5px;
+            overflow: auto;
+            background: #ffffff;
+            color: #000000;
+        }
+        
+        body {
+            text-align: center;
+            font-family: verdana, sans-serif;
+            background: #ffffff;
+        }
+        
+        td {
+            padding: 0px;
+        }
+        
+        button {
+            border: 0;
+            border-radius: 0.3rem;
+            background: #1fa3ec;
+            color: #ffffff;
+            line-height: 2.4rem;
+            font-size: 1.1rem;
+            width: 100%;
+            -webkit-transition-duration: 0.4s;
+            transition-duration: 0.4s;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background: #0e70a4;
+        }
+        
+        .bred {
+            background: #d43535;
+        }
+        
+        .bred:hover {
+            background: #931f1f;
+        }
+        
+        .bgrn {
+            background: #47c266;
+        }
+        
+        .bgrn:hover {
+            background: #5aaf6f;
+        }
+        
+        a {
+            text-decoration: none;
+        }
+        
+        .p {
+            float: left;
+            text-align: left;
+        }
+        
+        .q {
+            float: right;
+            text-align: right;
+        }
+    </style>
+	<script>
+			var g_hostName = '{0}';
+			var g_cdnPort  = '{1}';
+			var g_webPort  = '{2}';
+			
+			var app = angular.module('myApp', []);
+			app.controller('shd_000_ctrl', function($scope) 
+			{
+				$scope.shdItem = JSON.parse('{3}');
+				isDimmer = $scope.shdItem.isDimmer;
+				$scope.statData = "{5}";
+				
+				$scope.statusUpdate = function()
+				{
+					var onoff = $scope.statData.split('#;')[0];
+					var dimmer = $scope.statData.split('#;')[1];
+					var s = onoff.replace(/{t}/g, "<table style='width:100%'>").replace(/{s}/g, "<tr><th>").replace(/{m}/g, "</th><td>").replace(/{e}/g, "</td></tr>").replace(/{c}/g, "%'><div style='text-align:center;font-weight:");
+					$('#l1').innerHTML = s;
+					if(isDimmer)
+					{
+						($("input[isactivedimmer='true']")[0]).value= dimmer;
+						//console.log('Completed x.onreadystatechange ....' + isSyncInProgress);
+					}
+				}
+				$(document).ready(function() {$scope.statusUpdate();});
+				
+				
+				
+				$scope.navi2Config = function() 
+					{
+						location.replace('/cn?nodeId='+$scope.shdItem.nodeId);
+					}
+				$scope.navi2Console = function() 
+					{
+						location.replace('/cl?nodeId='+$scope.shdItem.nodeId);
+					}
+				
+			});
+		</script>
+</head>
+
+<body ng-app="myApp">
+	<div id ="controller" ng-controller="shd_000_ctrl">
+		<div id="page" style='text-align:left;display:inline-block;color:#000000;width:330px; border: 1px soild black;'>
+			<div style='text-align:center;'>
+				<noscript>To use Tasmota, please enable JavaScript
+					<br/>
+				</noscript>
+				<h3>{{shdItem.name}} Module</h3>
+				<h2>{{shdItem.friendlyName}}</h2>
+			</div>
+			<div id='l1' name='l1'></div>
+			<table style='width:100%' ng-show="shdItem.deviceType == 'tuya_switch_ch4'">
+				<tr>
+					<td style='width:25%'>
+						<button onclick='lo("&o=1");'>Toggle 1</button>
+					</td>
+					<td style='width:25%'>
+						<button onclick='lo("&o=2");'>Toggle 2</button>
+					</td>
+					<td style='width:25%'>
+						<button onclick='lo("&o=3");'>Toggle 3</button>
+					</td>
+					<td style='width:25%'>
+						<button onclick='lo("&o=3");'>Toggle 4</button>
+					</td>
+				</tr>
+			</table>
+			<table style='width:100%' ng-show="shdItem.deviceType == 'tuya_switch_ch3'">
+				<tr>
+					<td style='width:33%'>
+						<button onclick='lo("&o=1");'>Toggle 1</button>
+					</td>
+					<td style='width:33%'>
+						<button onclick='lo("&o=2");'>Toggle 2</button>
+					</td>
+					<td style='width:33%'>
+						<button onclick='lo("&o=3");'>Toggle 3</button>
+					</td>
+				</tr>
+			</table>
+			<table style='width:100%' ng-show="shdItem.deviceType == 'tuya_switch_ch2'">
+				<tr>
+					<td style='width:50%'>
+						<button onclick='lo("&o=1");'>Toggle 1</button>
+					</td>
+					<td style='width:50%'>
+						<button onclick='lo("&o=2");'>Toggle 2</button>
+					</td>
+				</tr>
+			</table>
+			<table style='width:100%' ng-show="shdItem.deviceType == 'tuya_switch_ch1'">
+				<tr>
+					<td style='width:100%'>
+						<button onclick='lo("&o=1");'>Toggle 1</button>
+					</td>
+				</tr>
+			</table>
+			<div ng-show="shdItem.deviceType == 'tuya_dimmer'">
+				<div><span class='p'>Dark</span><span class='q'>Bright</span></div>
+				<div>
+					<input type='range' min='1' max='100' value='92' onchange='lb(value)' isActiveDimmer = "{{shdItem.deviceType == 'tuya_dimmer'}}">
+				</div>
+				<table style='width:100%'>
+					<tr>
+						<td>
+							<button onclick='lo("&o=1");'>Toggle 1</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div ng-show="shdItem.deviceType == 'tuya_switch_fan'">
+				<div><span class='p'>Dark</span><span class='q'>Bright</span></div>
+				<div>
+					<input type='range' min='1' max='100' value='92' onchange='lb(value)' isActiveDimmer = "{{shdItem.deviceType == 'tuya_switch_fan'}}">
+				</div>
+				<table style='width:100%'>
+					<tr>
+						<td style='width:33%'>
+							<button onclick='lo("&o=1");'>Toggle 1</button>
+						</td>
+						<td style='width:33%'>
+							
+						</td>
+						<td style='width:33%'>
+							<button onclick='lo("&o=3");'>Toggle 3</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div></div>
+			<p>
+				<div>
+					<button ng-click="navi2Config()">Configuration</button>
+				</div>
+			</p>
+			<p>
+				<div>
+					<button ng-click="navi2Console()">Debug Console</button>
+				</div>
+			</p>
+			<p>
+				<form action='\' method='get'>
+					<button>Go Back</button>
+				</form>
+			</p>
+			<p>
+				<form action='.' method='get' onsubmit='return confirm("Confirm Restart");'>
+					<button name='rst' class='button bred'>Restart</button>
+				</form>
+			</p>
+			<div style='text-align:center;font-size:11px;;padding:0'>
+				<hr/>
+				<a href='https://bit.ly/tasmota' target='_blank' style='color:#aaa;'>Virtual Tasmota for Tuya-api devices (Sonoff-Tasmota 6.5.0.11) </a>
+			</div>
+		</div>
+		
+	</div>
+</body>
+
+</html>

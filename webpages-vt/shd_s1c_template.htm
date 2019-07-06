@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+
+<head>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+    <title>{{name}} - Virtual Tasmota</title>
+    <script>
+        var x = null,lt, to, tp, pc = '', isSyncInProgress = false;
+			
+
+        function eb(s) {
+            return document.getElementById(s);
+        }
+
+        function la(p) {
+            var a = '';
+			if(!isSyncInProgress)
+			{
+				if (la.arguments.length == 1) {
+					a = p;
+					clearTimeout(lt);
+				}
+				if (x != null) {
+					x.abort();
+				}
+				x = new XMLHttpRequest();
+				x.onreadystatechange = function() {
+					if (x.readyState == 4 && x.status == 200) {
+						var onoff = x.responseText;
+						//var dimmer = x.responseText.split('#;')[1];
+						var s = onoff.replace(/{t}/g, "<table style='width:100%'>").replace(/{s}/g, "<tr><th>").replace(/{m}/g, "</th><td>").replace(/{e}/g, "</td></tr>").replace(/{c}/g, "%'><div style='text-align:center;font-weight:");
+						eb('l1').innerHTML = s;
+						//(document.getElementsByTagName('input')[0]).value = dimmer;
+						//console.log('Completed x.onreadystatechange ....' + isSyncInProgress);
+					}
+				};
+				//console.log('Before x.open ....' + isSyncInProgress);
+				x.open('GET', './gd?m=1' + a + '&nodeId={{nodeId}}', true);
+				x.send();
+				//console.log('Completed x.send() ....' + isSyncInProgress);
+				lt = setTimeout(la, 2345);
+			}
+        }
+		function lo(p) 
+		{
+			isSyncInProgress = true;
+			var x1 = new XMLHttpRequest();
+				x1.onreadystatechange = function() {
+					if (x1.readyState == 4 && x1.status == 200) {
+						var onoff = x1.responseText;
+						//var dimmer = x1.responseText.split('#;')[1];
+						var s = onoff.replace(/{t}/g, "<table style='width:100%'>").replace(/{s}/g, "<tr><th>").replace(/{m}/g, "</th><td>").replace(/{e}/g, "</td></tr>").replace(/{c}/g, "%'><div style='text-align:center;font-weight:");
+						eb('l1').innerHTML = s;
+						//(document.getElementsByTagName('input')[0]).value = dimmer;
+						setTimeout( function() 
+						{
+							isSyncInProgress = false;
+							console.log('Completed x2.onreadystatechange ....' + isSyncInProgress);
+							la('');
+						}, 1000);
+						 if (x1 != null) {
+								x1.abort();
+							}
+					}
+				};
+				console.log('Before x2.open ....' + isSyncInProgress);
+				x1.open('GET', './sd?m=1' + p + '&nodeId={{nodeId}}', true);
+				x1.send();
+        }
+
+        function lc(p) {
+            la('&t=' + p);
+        }
+        window.onload = la();
+    </script>
+    <style>
+        div,
+        fieldset,
+        input,
+        select {
+            padding: 5px;
+            font-size: 1em;
+        }
+        
+        fieldset {
+            background: #f2f2f2;
+        }
+        
+        p {
+            margin: 0.5em 0;
+        }
+        
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            background: #ffffff;
+            color: #000000;
+        }
+        
+        input[type=checkbox],
+        input[type=radio] {
+            width: 1em;
+            margin-right: 6px;
+            vertical-align: -1px;
+        }
+        
+        select {
+            width: 100%;
+            background: #ffffff;
+            color: #000000;
+        }
+        
+        textarea {
+            resize: none;
+            width: 98%;
+            height: 318px;
+            padding: 5px;
+            overflow: auto;
+            background: #ffffff;
+            color: #000000;
+        }
+        
+        body {
+            text-align: center;
+            font-family: verdana, sans-serif;
+            background: #ffffff;
+        }
+        
+        td {
+            padding: 0px;
+        }
+        
+        button {
+            border: 0;
+            border-radius: 0.3rem;
+            background: #1fa3ec;
+            color: #ffffff;
+            line-height: 2.4rem;
+            font-size: 1.2rem;
+            width: 100%;
+            -webkit-transition-duration: 0.4s;
+            transition-duration: 0.4s;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background: #0e70a4;
+        }
+        
+        .bred {
+            background: #d43535;
+        }
+        
+        .bred:hover {
+            background: #931f1f;
+        }
+        
+        .bgrn {
+            background: #47c266;
+        }
+        
+        .bgrn:hover {
+            background: #5aaf6f;
+        }
+        
+        a {
+            text-decoration: none;
+        }
+        
+        .p {
+            float: left;
+            text-align: left;
+        }
+        
+        .q {
+            float: right;
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div style='text-align:left;display:inline-block;color:#000000;min-width:340px;'>
+        <div style='text-align:center;'>
+            <noscript>To use Tasmota, please enable JavaScript
+                <br/>
+            </noscript>
+            <h3>Tuya Switch - 1CH Module</h3>
+            <h2>{{name}}</h2></div>
+        <div id='l1' name='l1'></div>
+        <table style='width:100%'>
+            <tr>
+                <td style='width:100%'>
+                    <button onclick='lo("&o=1");'>Toggle 1</button>
+                </td>
+            </tr>
+        </table>
+        <div></div>
+        <p>
+            <form action='cn' method='get'>
+                <button>Configuration</button>
+            </form>
+        </p>
+        <p>
+            <form action='in' method='get'>
+                <button>Information</button>
+            </form>
+        </p>
+        <p>
+            <form action='up' method='get'>
+                <button>Firmware Upgrade</button>
+            </form>
+        </p>
+        <p>
+            <form action='cs' method='get'>
+                <button>Console</button>
+            </form>
+        </p>
+        <p>
+            <form action='.' method='get' onsubmit='return confirm("Confirm Restart");'>
+                <button name='rst' class='button bred'>Restart</button>
+            </form>
+        </p>
+        <div style='text-align:right;font-size:11px;'>
+            <hr/><a href='https://bit.ly/tasmota' target='_blank' style='color:#aaa;'>Virtual Tasmota for Tuya-api devices (Sonoff-Tasmota 6.5.0.11) </a></div>
+    </div>
+</body>
+
+</html>
