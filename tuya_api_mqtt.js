@@ -78,7 +78,7 @@ var client  = mqtt.connect(util.MqTTServer)
 var devTopics = [];
 var ignoreTopic = [];
 var createDevice = function() {};
-var mqtt_cmnds = {sub:{power:'cmnd/{0}/power{1}', dimmer : 'cmnd/{0}/dimmer', tele: 'cmnd/{0}/teleperiod'}, pub: 'stat/{0}/RESULT', tel : 'tele/{0}/STATE'};
+var mqtt_cmnds = {sub:{power:'cmnd/{0}/power{1}', dimmer : 'cmnd/{0}/dimmer', tele: 'cmnd/{0}/teleperiod'}, pub: 'stat/{0}/result', tel : 'tele/{0}/state'};
 client.on('connect', function ()
 {
 	for(var i=0; i < tad.length; i++)
@@ -184,15 +184,15 @@ var publishMqtt = function(mqtt)
 	var topic = "";
 	if(mqtt.type == 'Result')
 	{
-			topic = 'stat/{0}/RESULT'.format(mqtt.nodeId);
+			topic = 'stat/{0}/result'.format(mqtt.nodeId);
 	}
 	if(mqtt.type == 'Power')
 	{
-			topic = 'stat/{0}/POWER{1}'.format(mqtt.nodeId, mqtt.param);
+			topic = 'stat/{0}/power{1}'.format(mqtt.nodeId, mqtt.param);
 	}
 	if(mqtt.type == 'Dimmer')
 	{
-			topic = 'stat/{0}/RESULT'.format(mqtt.nodeId);
+			topic = 'stat/{0}/result'.format(mqtt.nodeId);
 	}
 	client.publish(topic, mqtt.value);
 }
@@ -210,7 +210,7 @@ var processData  = function(data, di)
 		console.log(dip.nodeId + ' mcuDimmer' , mcuDimmer);
 		var mqtt = {};
 		mqtt.type  = 'Dimmer';
-		mqtt.value = mqtt.value = '{"'+'POWER1":"' + dip.data['POWER1'] + '","Dimmer":' +mcuDimmer+'}';
+		mqtt.value = mqtt.value = '{"'+'power1":"' + dip.data['POWER1'] + '","dimmer":' +mcuDimmer+'}';
 		mqtt.nodeId = di;
 		mqtt.param = "";
 		publishMqtt(mqtt);
@@ -228,7 +228,7 @@ var processData  = function(data, di)
 				dip.data['POWER' + pow] = pushPower;
 				var mqtt = {};
 				mqtt.type  = 'Result';
-				mqtt.value = '{"'+'POWER' + pow + '" : "' + dip.data['POWER' + pow] +'"}';
+				mqtt.value = '{"'+'power' + pow + '" : "' + dip.data['POWER' + pow] +'"}';
 				mqtt.nodeId = di;
 				mqtt.param = "";
 				publishMqtt(mqtt);
