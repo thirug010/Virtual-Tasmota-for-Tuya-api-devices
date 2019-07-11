@@ -173,6 +173,30 @@
 			width: 100%;
 			padding: 5px;
 		}
+		.check-label
+		{
+			font-size: 12px;
+			float: left;
+			margin-left: -8px;
+			margin-top: 2px;
+		}
+		.checkbox-style
+		{
+			width: 16px;
+			height: 17px;
+			margin-left: -3px;
+		}
+		.div-checkbox
+		{
+			float: left;
+			margin-top: -2px;
+		}
+		.div-set-option
+		{
+			padding:0;
+			float:left;
+			height: 30px;
+		}
     </style>
 	<script>
 		var g_hostName = '{0}';
@@ -325,6 +349,20 @@
                         </td>
                     </tr>
 					
+					<tr>
+                        <td style="width:190px"> <b>Home Assistant </b></td>
+						<td style="width:160px">
+							<div class="div-set-option">
+								<div class="div-checkbox">
+									<input type="checkbox" id="setOption19" name="setOption19" class="checkbox-style" ng-model="shdItem.setOption19">
+								</div>
+								<div class="check-label">
+									<label for="setOption19">SetOption(19)</label>
+								</div>
+							</div>
+						</td>
+                    </tr>
+										
                     <tr>
                         <td style="width:190px"> <b>Mqtt Topic</b></td>
 						<td style="width:160px">
@@ -336,6 +374,35 @@
 							</select>
 						</td>
                     </tr>
+					<!--
+					<tr ng-show="shdItem.setOption19" style="height:28px" >
+                        <td style="width:190px"> <b>Friendly Name 1</b></td>
+						<td style="width:160px">
+							<input ng-model="shdItem.friendlyNames[0]"> </input>
+						</td>
+                    </tr>
+					
+					<tr ng-show="shdItem.setOption19" style="height:28px">
+                        <td style="width:190px"> <b>Friendly Name 2</b></td>
+						<td style="width:160px">
+							<input ng-model="shdItem.friendlyNames[1]"> </input>
+						</td>
+                    </tr>
+					
+					<tr ng-show="shdItem.setOption19" style="height:28px">
+                        <td style="width:190px"> <b>Friendly Name 3</b></td>
+						<td style="width:160px">
+							<input ng-model="shdItem.friendlyNames[2]"> </input>
+						</td>
+                    </tr>
+					
+					<tr ng-show="shdItem.setOption19" style="height:28px">
+                        <td style="width:190px"> <b>Friendly Name 4</b></td>
+						<td style="width:160px">
+							<input ng-model="shdItem.friendlyNames[3]"> </input>
+						</td>
+                    </tr>
+					!-->
 					
                 </table>
                 <br/>

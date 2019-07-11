@@ -44,6 +44,10 @@ var setTelePeriod = function(v,vl)
 			var d = n$.LinqIt(cTad(),true).Where([{PropertyName : 'nodeId', PropertyValue : args.nodeId}]).FirstOrDefault();
 			var topic = mqtt_cmnds.tel.format(d.nodeId);
 			var msg = JSON.stringify(d.getData());
+			if(n$.isNull(d.setOption19, false))
+			{
+					msg = JSON.stringify(d.getData()).toLowerCase();
+			}
 			client.publish(topic, msg);
 		}
 		vl.teleTimeoutcb =  setInterval(teleCallback,t, {nodeId : v.nodeId});
@@ -56,19 +60,41 @@ var doMqttSubscribe = function(v)
 	for(var p = 0; p < v.powers.length; p++)
 	{
 		var powerId = v.powers[p];
-		var subTopic = mqtt_cmnds.sub.power.format(nodeId.toLowerCase(), powerId);
+		var subTopic = "";
+		if(n$.isNull(v.isSetOption19,false))
+		{
+			subTopic = mqtt_ha_cmnds.sub.power.format(nodeId.toLowerCase(), powerId);
+		}
+		else {
+			subTopic = mqtt_cmnds.sub.power.format(nodeId.toLowerCase(), powerId);
+		}
 		client.subscribe(subTopic);
 		devTopics.push({topic: subTopic, nodeId : nodeId.toLowerCase(), deviceId : powerId, type: 'power'});
 	}
 	// Default Power cmnd support
 	var powerId = "";
-	var subTopic = mqtt_cmnds.sub.power.format(nodeId.toLowerCase(), powerId);
+	var subTopic = "";
+	if(n$.isNull(v.isSetOption19,false))
+	{
+		subTopic = mqtt_ha_cmnds.sub.power.format(nodeId.toLowerCase(), powerId);
+	}
+	else {
+		subTopic = mqtt_cmnds.sub.power.format(nodeId.toLowerCase(), powerId);
+	}
 	client.subscribe(subTopic);
 	devTopics.push({topic: subTopic, nodeId : nodeId.toLowerCase(), deviceId : powerId, type: 'power'});
 
 	if(v.isDimmer)
 	{
-		var subTopic = mqtt_cmnds.sub.dimmer.format(nodeId.toLowerCase());
+		var subTopic = ""
+		if(n$.isNull(v.isSetOption19,false))
+		{
+			subTopic = mqtt_ha_cmnds.sub.dimmer.format(nodeId.toLowerCase());
+		}
+		else {
+			subTopic = mqtt_cmnds.sub.dimmer.format(nodeId.toLowerCase());
+		}
+
 		client.subscribe(subTopic);
 		devTopics.push({topic: subTopic, nodeId : nodeId.toLowerCase(), deviceId : v.dimmerId, type: 'dimmer'});
 	}
@@ -78,7 +104,8 @@ var client  = mqtt.connect(util.MqTTServer)
 var devTopics = [];
 var ignoreTopic = [];
 var createDevice = function() {};
-var mqtt_cmnds = {sub:{power:'cmnd/{0}/power{1}', dimmer : 'cmnd/{0}/dimmer', tele: 'cmnd/{0}/teleperiod'}, pub: 'stat/{0}/result', tel : 'tele/{0}/state'};
+var mqtt_cmnds = {sub:{power:'cmnd/{0}/power{1}', dimmer : 'cmnd/{0}/dimmer', tele: 'cmnd/{0}/teleperiod'}, pub: 'stat/{0}/RESULT', tel : 'tele/{0}/STATE'};
+var mqtt_ha_cmnds = {sub:{power:'cmnd/{0}/power{1}', dimmer : 'cmnd/{0}/dimmer', tele: 'cmnd/{0}/teleperiod'}, pub: 'stat/{0}/result', tel : 'tele/{0}/state'};
 client.on('connect', function ()
 {
 	for(var i=0; i < tad.length; i++)
@@ -138,6 +165,7 @@ client.on('message', function (topic, message)
 	if(devtopic.type == 'power')
 	{
 		req.query['o'] = cdeviceId;
+		req.query['p'] = msg;
 	}
 	util.processSetRequest(req, device);
 	/*
@@ -182,20 +210,40 @@ var publishMqtt = function(mqtt)
 {
 	console.log('Publish Mqtt:', mqtt)
 	var topic = "";
-	if(mqtt.type == 'Result')
+	if(n$.isNull(mqtt.isHa, false))
 	{
-			topic = 'stat/{0}/result'.format(mqtt.nodeId);
+		if(mqtt.type == 'Result')
+		{
+				topic = 'stat/{0}/result'.format(mqtt.nodeId);
+		}
+		if(mqtt.type == 'Power')
+		{
+				topic = 'stat/{0}/power{1}'.format(mqtt.nodeId, mqtt.param);
+		}
+		if(mqtt.type == 'Dimmer')
+		{
+				topic = 'stat/{0}/result'.format(mqtt.nodeId);
+		}
 	}
-	if(mqtt.type == 'Power')
-	{
-			topic = 'stat/{0}/power{1}'.format(mqtt.nodeId, mqtt.param);
+	else {
+		if(mqtt.type == 'Result')
+		{
+				topic = 'stat/{0}/RESULT'.format(mqtt.nodeId);
+		}
+		if(mqtt.type == 'Power')
+		{
+				topic = 'stat/{0}/POWER{1}'.format(mqtt.nodeId, mqtt.param);
+		}
+		if(mqtt.type == 'Dimmer')
+		{
+				topic = 'stat/{0}/RESULT'.format(mqtt.nodeId);
+		}
 	}
-	if(mqtt.type == 'Dimmer')
-	{
-			topic = 'stat/{0}/result'.format(mqtt.nodeId);
-	}
+
 	client.publish(topic, mqtt.value);
 }
+
+
 var processData  = function(data, di)
 {
 	console.log('called processData: for '+di, data)
@@ -210,7 +258,13 @@ var processData  = function(data, di)
 		console.log(dip.nodeId + ' mcuDimmer' , mcuDimmer);
 		var mqtt = {};
 		mqtt.type  = 'Dimmer';
-		mqtt.value = mqtt.value = '{"'+'power1":"' + dip.data['POWER1'] + '","dimmer":' +mcuDimmer+'}';
+			mqtt.value = mqtt.value = '{"'+'POWER1":"' + dip.data['POWER1'] + '","Dimmer":' +mcuDimmer+'}';
+		if(n$.isNull(dip.setOption19, false))
+		{
+			mqtt.isHa = true;
+			mqtt.value = mqtt.value = '{"'+'power1":"' + dip.data['POWER1'] + '","dimmer":' +mcuDimmer+'}';
+		}
+
 		mqtt.nodeId = di;
 		mqtt.param = "";
 		publishMqtt(mqtt);
@@ -228,7 +282,12 @@ var processData  = function(data, di)
 				dip.data['POWER' + pow] = pushPower;
 				var mqtt = {};
 				mqtt.type  = 'Result';
-				mqtt.value = '{"'+'power' + pow + '" : "' + dip.data['POWER' + pow] +'"}';
+				mqtt.value = '{"'+'POWER' + pow + '" : "' + dip.data['POWER' + pow] +'"}';
+				if(n$.isNull(dip.setOption19, false))
+				{
+					mqtt.isHa = true;
+					mqtt.value = '{"'+'power' + pow + '" : "' + dip.data['POWER' + pow] +'"}';
+				}
 				mqtt.nodeId = di;
 				mqtt.param = "";
 				publishMqtt(mqtt);
@@ -237,6 +296,10 @@ var processData  = function(data, di)
 				var mqtt = {};
 				mqtt.type  = 'Power';
 				mqtt.value = dip.data['POWER' + pow];
+				if(n$.isNull(dip.setOption19, false))
+				{
+					mqtt.isHa = true;
+				}
 				mqtt.nodeId = di;
 				mqtt.param = pow.toString();
 				publishMqtt(mqtt);

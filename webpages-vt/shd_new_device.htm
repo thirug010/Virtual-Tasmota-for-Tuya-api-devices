@@ -156,6 +156,30 @@
 			margin-top: -35px;
 			margin-left: 134px;
 		}
+		.check-label
+		{
+			font-size: 12px;
+			float: left;
+			margin-left: -8px;
+			margin-top: -2px;
+		}
+		.checkbox-style
+		{
+			width: 16px;
+			height: 17px;
+			margin-left: -3px;
+		}
+		.div-checkbox
+		{
+			float: left;
+			margin-top: 2px;
+		}
+		.div-set-option
+		{
+			padding:0;
+			float:left;
+			height: 30px;
+		}
     </style>
 	<script>
 		var g_hostName = '{0}';
@@ -356,6 +380,19 @@
 									</tr></tbody>
 							</table>
                         </td>
+                    </tr>
+					<tr>
+                        <td style="width:190px"> <b>Home Assistant </b></td>
+						<td style="width:160px">
+							<div class="div-set-option">
+								<div class="div-checkbox">
+									<input type="checkbox" id="setOption19" name="setOption19" class="checkbox-style" ng-model="shdItem.setOption19">
+								</div>
+								<div class="check-label">
+									<label for="setOption19">SetOption(19)</label>
+								</div>
+							</div>
+						</td>
                     </tr>
 					<tr>
                         <td style="width:190px"> <b>Mqtt Topic</b></td>

@@ -6,7 +6,7 @@ var njDB = require('./nodeStorage2.js');
 njDB.init('Tuya-Api-Tasmota.rs');
 
 
-Utility.MqTTServer = 'mqtt://xxx.xxx.x.xx:1883'; // mqtt server ip nd port 
+Utility.MqTTServer = 'mqtt://192.168.1.10:1883'; // MQtt server ip and port
 
 Utility.tam_storage_key = 'tam_app_001';
 Utility.getStorageKey = function(propertyname)
@@ -47,24 +47,20 @@ njDB.swapItem = function(key, item)
 
 Utility.SessionTimeOut = 1000 * 60;
 Utility.deviceTypes = [
-						   {name: 'Tuya Dimmer',      id: 'tuya_dimmer',     template:'shd_d1c_template.htm' ,isDimmer: true  ,powers:[1], 	  	  },// dimmerId :2, rangeFactor:100, minDimValue:10 },
-						   {name: 'Tuya Fan Switch',  id: 'tuya_switch_fan', template:'shd_d2c_template.htm' ,isDimmer: true  ,powers:[1,3], 	    },// dimmerId :2, rangeFactor:255, minDimValue:10 },
-						   {name: 'Tuya Swtich 1 CH', id: 'tuya_switch_ch1', template:'shd_s1c_template.htm' ,isDimmer: false ,powers:[1], 	  	  },// dimmerId :0, rangeFactor:-1 , minDimValue:-1 },
-						   {name: 'Tuya Swtich 2 CH', id: 'tuya_switch_ch2', template:'shd_s2c_template.htm' ,isDimmer: false ,powers:[1,2], 	    },// dimmerId :0, rangeFactor:-1 , minDimValue:-1 },
-						   {name: 'Tuya Swtich 3 CH', id: 'tuya_switch_ch3', template:'shd_s3c_template.htm' ,isDimmer: false ,powers:[1,2,3],    },// dimmerId :0, rangeFactor:-1 , minDimValue:-1 },
-						   {name: 'Tuya Swtich 4 CH', id: 'tuya_switch_ch4', template:'shd_s4c_template.htm' ,isDimmer: false ,powers:[1,2,3,4],  },// dimmerId :0, rangeFactor:-1 , minDimValue:-1 }
-                      ];
-					  
+											   {name: 'Tuya Dimmer',      id: 'tuya_dimmer',     template:'shd_d1c_template.htm' ,isDimmer: true  ,powers:[1], 	  	  },// dimmerId :2, rangeFactor:100, minDimValue:10 },
+											   {name: 'Tuya Fan Switch',  id: 'tuya_switch_fan', template:'shd_d2c_template.htm' ,isDimmer: true  ,powers:[1,3], 	    },// dimmerId :2, rangeFactor:255, minDimValue:10 },
+											   {name: 'Tuya Swtich 1 CH', id: 'tuya_switch_ch1', template:'shd_s1c_template.htm' ,isDimmer: false ,powers:[1], 	  	  },// dimmerId :0, rangeFactor:-1 , minDimValue:-1 },
+											   {name: 'Tuya Swtich 2 CH', id: 'tuya_switch_ch2', template:'shd_s2c_template.htm' ,isDimmer: false ,powers:[1,2], 	    },// dimmerId :0, rangeFactor:-1 , minDimValue:-1 },
+											   {name: 'Tuya Swtich 3 CH', id: 'tuya_switch_ch3', template:'shd_s3c_template.htm' ,isDimmer: false ,powers:[1,2,3],    },// dimmerId :0, rangeFactor:-1 , minDimValue:-1 },
+											   {name: 'Tuya Swtich 4 CH', id: 'tuya_switch_ch4', template:'shd_s4c_template.htm' ,isDimmer: false ,powers:[1,2,3,4],  },// dimmerId :0, rangeFactor:-1 , minDimValue:-1 }
+					            ];
 Utility.devicesConfig = [];
-
 Utility.devicesList = [];
 Utility.init = function (cdnPort, webPort)
 {
   Utility.cdnPort = cdnPort;
   Utility.webPort = webPort;
 	Utility.initDevices();
-
-    //console.log('Utility.devicesList: ', Utility.devicesList)
 }
 Utility.initDevices = function()
 {
@@ -73,12 +69,13 @@ Utility.initDevices = function()
   var join = {OnColumns: [{RName:'id', LName:'deviceType'}], SelectAll: true ,  JoinType: 'Inner'}
   Utility.devicesList =n$.LinqIt(Utility.devicesConfig, true).Join(Utility.deviceTypes, join).ToList();
 	Utility.devicesListLite = [];
-  	for(var i=0; i < Utility.devicesList.length; i++)
+  for(var i=0; i < Utility.devicesList.length; i++)
   	{
   		var v = Utility.devicesList[i];
   		var nodeId = v.nodeId;
   		var isDimmer = n$.isNull(v.dimmerId,0) != 0;
   		v.isDimmer = isDimmer;
+			v.isSetOption19 = false;
       v.titleShort = v.friendlyName.length >=16 ? v.friendlyName.substring(0,8)+'..': v.friendlyName;
       v.devIdShort = v.devId.slice(v.devId.length-7 ,-1);
   		v.data = {};
@@ -137,12 +134,6 @@ Utility.processPageRequest = function (req)
     // nodeId
     if(!n$.isNullOrUndef(q.nodeId))
     {
-        //console.log(q.nodeId);
-        /*
-        var pgTemp = n$.LinqIt(Utility.devicesList).Where([{PropertyName : 'nodeId', PropertyValue : q.nodeId}]).FirstOrDefault();
-        var pgData = fs.readFileSync(__dirname+'/webpages-vt/'+pgTemp.template, 'utf8');
-        pgData = pgData.replaceAll('{{nodeId}}', pgTemp.nodeId).replaceAll('{{name}}', pgTemp.name);
-        */
         var pgTemp = n$.LinqIt(Utility.devicesList, true).Where([{PropertyName : 'nodeId', PropertyValue : q.nodeId}]).FirstOrDefault();
         var pgData = fs.readFileSync(__dirname+'/webpages-vt/shd_dev_template.htm', 'utf8');
         var hostName = req.protocol + '://' + req.get('host').split(':')[0];
@@ -232,7 +223,7 @@ Utility.processSetRequest = function (req, device)
                 }
                 if(!n$.isNullOrUndef(q.o))
                 {
-                    pgTemp.data['POWER'+q.o] = Utility.toogleStatus(pgTemp.data['POWER'+q.o])
+                    pgTemp.data['POWER'+q.o] = Utility.toogleStatus(pgTemp.data['POWER'+q.o], q.p);
                 }
                 break;
             }
@@ -246,7 +237,7 @@ Utility.processSetRequest = function (req, device)
                 }
                 if(!n$.isNullOrUndef(q.o))
                 {
-                    pgTemp.data['POWER'+q.o] = Utility.toogleStatus(pgTemp.data['POWER'+q.o]);
+                    pgTemp.data['POWER'+q.o] = Utility.toogleStatus(pgTemp.data['POWER'+q.o], q.p);
                 }
                 break;
             }
@@ -257,7 +248,7 @@ Utility.processSetRequest = function (req, device)
             {
               if(!n$.isNullOrUndef(q.o))
               {
-                  pgTemp.data['POWER'+q.o] = Utility.toogleStatus(pgTemp.data['POWER'+q.o])
+                  pgTemp.data['POWER'+q.o] = Utility.toogleStatus(pgTemp.data['POWER'+q.o], q.p);
               }
               break;
             }
@@ -376,16 +367,40 @@ Utility.updateDevStatus = function(pgTemp, device)
     }
     //return setData;
 }
-Utility.toogleStatus = function(status)
+Utility.toogleStatus = function(status, power)
 {
-    if(status == 'ON')
-    {
-        return 'OFF';
-    }
-    else
-    {
-      return 'ON';
-    }
+	  if(n$.isNullOrUndef(power))
+		{
+	    if(status == 'ON')
+	    {
+	        return 'OFF';
+	    }
+	    else
+	    {
+	      return 'ON';
+	    }
+	 }
+	 else {
+	 		if (power == 1 || power.toLowerCase() == 'on' || power == '1')
+			{
+				return 'ON';
+			}
+			if (power == 0 || power.toLowerCase() == 'off' || power == '0')
+			{
+				return 'OFF';
+			}
+			if (power == 2 || power.toLowerCase() == 'toogle'|| power == '2')
+			{
+				if(status == 'ON')
+		    {
+		        return 'OFF';
+		    }
+		    else
+		    {
+		      return 'ON';
+		    }
+			}
+	 }
 }
 Utility.getDeviceStatus = function (pgTemp)
 {
@@ -570,6 +585,54 @@ Utility.updateTasmotaDev=function(req)
 				return Utility.addNewTasmotaDev(req);
 		 }
 }
+
+hisso = {mqttConfig : {}};
+hisso.mqttConfig
+ ={
+  power : {topic: "homeassistant/switch/{0}_RL_{1}/config", message: '{"name":"{3}","cmd_t":"~cmnd/POWER{1}","stat_t":"~tele/STATE","val_tpl":"{{value_json.POWER{1}}}","pl_off":"OFF","pl_on":"ON","avty_t":"~tele/LWT","pl_avail":"Online","pl_not_avail":"Offline","uniq_id":"{0}_RL_{1}","device":{"identifiers":["{0}"]},"~":"{2}/"}' },
+  dimmer: {topic: "homeassistant/light/{0}_LI_{1}/config",  message: '{"name":"{3}","cmd_t":"~cmnd/POWER{1}","stat_t":"~tele/STATE","val_tpl":"{{value_json.POWER{1}}}","pl_off":"OFF","pl_on":"ON","avty_t":"~tele/LWT","pl_avail":"Online","pl_not_avail":"Offline","uniq_id":"{0}_LI_{1}","device":{"identifiers":["{0}"]},"~":"{2}/","bri_cmd_t":"~cmnd/Dimmer","bri_stat_t":"~tele/STATE","bri_scl":{4},"on_cmd_type":"brightness","bri_val_tpl":"{{value_json.Dimmer}}"}'},
+  status: {topic: "homeassistant/sensor/{0}_status/config", message: '{"name":"{3} status","stat_t":"~HASS_STATE","avty_t":"~LWT","pl_avail":"Online","pl_not_avail":"Offline","json_attributes_topic":"~HASS_STATE","unit_of_meas":" ","val_tpl":"{{value_json[*!*RSSI*!*]}}","uniq_id":"{0}_status","device":{"identifiers":["{0}"],"name":"{3}","model":"{5}","sw_version":"{6}","manufacturer":"Virtual-Tasmota"},"~":"{3}/tele/"}'},
+  hotele: {topic: "{2}/tele/HASS_STATE"					 , 	message: '{"Version":"{6}","BuildDateTime":"2019-07-08T11:10:01","Core":"2_5_2","SDK":"2.2.2-dev(c0eb301)","Module":"{5}","RestartReason":"Software/System restart","Uptime":"0T05:10:17","WiFi LinkCount":1,"WiFi Downtime":"0T00:00:05","MqttCount":1,"BootCount":8,"SaveCount":27,"IPAddress":"{7}","RSSI":"70","LoadAvg":999}'}
+}
+
+//macId6, powerId, nodeId, friendlyName offsetRange, deviceType, version, ipAddress,
+
+var dev = {powers : [1,3], dimmerId :2, isDimmer : true, macId6 : '33er45', nodeId: 'shd_s1c_hio_001', friendlyName:['shd_s1c_hio_001_01','shd_s1c_hio_001_02', 'shd_s1c_hio_001_03'], offsetRange :100, deviceType:'Tuya_Dimmer', ipAddress : '192.168.1.23'};
+var mqttmessages = [];
+var topic = '';
+var mqttmsg = '';
+var sversion = 'vt-6.6.0';
+
+// Power
+for(var p = 0; p < dev.powers.length; p++)
+{
+	var powerId = dev.powers[p];
+	mqttmsg = hisso.mqttConfig.power.message.format(dev.macId6, powerId, dev.nodeId, dev.friendlyName[p], dev.offsetRange, dev.deviceType, sversion, dev.ipAddress);
+	topic = hisso.mqttConfig.power.topic.format(dev.macId6,powerId, dev.nodeId);
+	mqttmessages.push({topic:topic, messsage:mqttmsg});
+
+}
+// Dimmer
+if(dev.IsDimmer)
+{
+	var powerId = dev.dimmerId;
+	mqttmsg = hisso.mqttConfig.dimmer.message.format(dev.macId6, powerId, dev.nodeId, dev.friendlyName[p], dev.offsetRange, dev.deviceType, sversion, dev.ipAddress);
+	topic = hisso.mqttConfig.dimmer.topic.format(dev.macId6,powerId, dev.nodeId);
+	mqttmessages.push({topic:topic, messsage:mqttmsg});
+}
+//Status
+	mqttmsg = hisso.mqttConfig.status.message.format(dev.macId6, '', dev.nodeId, dev.friendlyName[p], dev.offsetRange, dev.deviceType, sversion, dev.ipAddress);
+	topic = hisso.mqttConfig.status.topic.format(dev.macId6,powerId, dev.nodeId);
+	mqttmessages.push({topic:topic, messsage:mqttmsg});
+
+
+// Tele
+	mqttmsg = hisso.mqttConfig.hotele.message.format(dev.macId6, '', dev.nodeId, dev.friendlyName[p], dev.offsetRange, dev.deviceType, sversion, dev.ipAddress);
+	topic = hisso.mqttConfig.hotele.topic.format(dev.macId6,powerId, dev.nodeId);
+	mqttmessages.push({topic:topic, messsage:mqttmsg});
+
+
+
 
 
 
