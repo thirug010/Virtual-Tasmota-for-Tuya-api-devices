@@ -10,6 +10,8 @@
     "mqtt": "^3.0.0",
     "node-storage": "0.0.8",
     "path": "0.12.7",
-    "tuyapi": "^5.1.1"
+    "inquirer:"6.5.0",
+    "chalk":"2.4.2",
+    "figlet":"1.2.3"
   }
 }
