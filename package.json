@@ -9,9 +9,10 @@
     "express-session": "1.16.2",
     "mqtt": "^3.0.0",
     "node-storage": "0.0.8",
+    "tuyapi": "^5.1.1",
     "path": "0.12.7",
-    "inquirer:"6.5.0",
-    "chalk":"2.4.2",
-    "figlet":"1.2.3"
+    "inquirer": "6.5.0",
+    "chalk": "2.4.2",
+    "figlet": "1.2.3"
   }
 }
