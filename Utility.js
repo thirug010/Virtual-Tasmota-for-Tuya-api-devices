@@ -9,7 +9,7 @@ njDB.init('Tuya-Api-Tasmota.rs');
 Utility.mqttServer = 'mqtt://xxx.xxx.x.xxx:yyyy'; // MQtt server ip and port
 Utility.mqttUsername = 'xxxxxx'; // MQtt server username 
 Utility.mqttPassword = 'xxxxx'; // MQtt server username 
-Utility.mqttUseSequreLogin = true; // set false to use mqtt awith username and password 
+Utility.mqttUseSequreLogin = false; // set true to use mqtt with username and password 
 Utility.mqttClientId = 'vir_tasmota_001'; // Mqtt client name 
 
 Utility.tam_storage_key = 'tam_app_001';
