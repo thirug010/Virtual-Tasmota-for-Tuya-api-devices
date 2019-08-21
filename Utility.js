@@ -6,7 +6,11 @@ var njDB = require('./nodeStorage2.js');
 njDB.init('Tuya-Api-Tasmota.rs');
 
 
-Utility.MqTTServer = 'mqtt://192.168.1.10:1883'; // MQtt server ip and port
+Utility.mqttServer = 'mqtt://xxx.xxx.x.xxx:yyyy'; // MQtt server ip and port
+Utility.mqttUsername = 'xxxxxx'; // MQtt server username 
+Utility.mqttPassword = 'xxxxx'; // MQtt server username 
+Utility.mqttUseSequreLogin = true; // set false to use mqtt awith username and password 
+Utility.mqttClientId = 'vir_tasmota_001'; // Mqtt client name 
 
 Utility.tam_storage_key = 'tam_app_001';
 Utility.getStorageKey = function(propertyname)
@@ -47,12 +51,13 @@ njDB.swapItem = function(key, item)
 
 Utility.SessionTimeOut = 1000 * 60;
 Utility.deviceTypes = [
-											   {name: 'Tuya Dimmer',      id: 'tuya_dimmer',     template:'shd_d1c_template.htm' ,isDimmer: true  ,powers:[1], 	  	  },// dimmerId :2, rangeFactor:100, minDimValue:10 },
-											   {name: 'Tuya Fan Switch',  id: 'tuya_switch_fan', template:'shd_d2c_template.htm' ,isDimmer: true  ,powers:[1,3], 	    },// dimmerId :2, rangeFactor:255, minDimValue:10 },
-											   {name: 'Tuya Swtich 1 CH', id: 'tuya_switch_ch1', template:'shd_s1c_template.htm' ,isDimmer: false ,powers:[1], 	  	  },// dimmerId :0, rangeFactor:-1 , minDimValue:-1 },
-											   {name: 'Tuya Swtich 2 CH', id: 'tuya_switch_ch2', template:'shd_s2c_template.htm' ,isDimmer: false ,powers:[1,2], 	    },// dimmerId :0, rangeFactor:-1 , minDimValue:-1 },
-											   {name: 'Tuya Swtich 3 CH', id: 'tuya_switch_ch3', template:'shd_s3c_template.htm' ,isDimmer: false ,powers:[1,2,3],    },// dimmerId :0, rangeFactor:-1 , minDimValue:-1 },
-											   {name: 'Tuya Swtich 4 CH', id: 'tuya_switch_ch4', template:'shd_s4c_template.htm' ,isDimmer: false ,powers:[1,2,3,4],  },// dimmerId :0, rangeFactor:-1 , minDimValue:-1 }
+											   {name: 'Tuya Dimmer',      id: 'tuya_dimmer',     	template:'shd_d1c_template.htm' ,isDimmer: true  ,powers:[1], 	  	  },// dimmerId :2, rangeFactor:100, minDimValue:10 },
+											   {name: 'Tuya Fan Switch',  id: 'tuya_switch_fan', 	template:'shd_d2c_template.htm' ,isDimmer: true  ,powers:[1,3], 	    },// dimmerId :2, rangeFactor:255, minDimValue:10 },
+											   {name: 'Tuya Swtich 1 CH', id: 'tuya_switch_ch1', 	template:'shd_s1c_template.htm' ,isDimmer: false ,powers:[1], 	  	  },// dimmerId :0, rangeFactor:-1 , minDimValue:-1 },
+											   {name: 'Tuya Swtich 2 CH', id: 'tuya_switch_ch2', 	template:'shd_s2c_template.htm' ,isDimmer: false ,powers:[1,2], 	    },// dimmerId :0, rangeFactor:-1 , minDimValue:-1 },
+											   {name: 'Tuya Swtich 3 CH', id: 'tuya_switch_ch3', 	template:'shd_s3c_template.htm' ,isDimmer: false ,powers:[1,2,3],    },// dimmerId :0, rangeFactor:-1 , minDimValue:-1 },
+											   {name: 'Tuya Swtich 4 CH', id: 'tuya_switch_ch4', 	template:'shd_s4c_template.htm' ,isDimmer: false ,powers:[1,2,3,4],  },// dimmerId :0, rangeFactor:-1 , minDimValue:-1 }
+												 {name: 'Tuya Door Sensor', id: 'tuya_door_sensor',	template:'shd_s1c_template.htm' ,isDimmer: false ,powers:[1],  			}// dimmerId :0, rangeFactor:-1 , minDimValue:-1 }
 					            ];
 Utility.devicesConfig = [];
 Utility.devicesList = [];
