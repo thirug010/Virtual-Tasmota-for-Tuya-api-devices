@@ -359,7 +359,7 @@ Utility.updateDevStatus = function(pgTemp, device)
         var p1 = pgTemp.data.POWER1 =='ON'? true :false;
         var p2 = pgTemp.data.POWER2 =='ON'? true :false;
         var p3 = pgTemp.data.POWER3 =='ON'? true :false;
-        var p4 = pgTemp.data.POWER$ =='ON'? true :false;
+        var p4 = pgTemp.data.POWER4 =='ON'? true :false;
         var setData = {
           						  multiple: true,
           						      data: {'1' : p1, '2' : p2, '3' : p3, '4': p4}
